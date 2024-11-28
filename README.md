@@ -1,0 +1,2 @@
+# VaiashManager
+Gestor de  tienda
