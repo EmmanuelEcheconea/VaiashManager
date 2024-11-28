@@ -1,0 +1,24 @@
+package com.vaiashmanager.db;
+
+import com.vaiashmanager.db.entity.PermissionEntity;
+import com.vaiashmanager.db.entity.RoleEntity;
+import com.vaiashmanager.db.entity.RoleEnum;
+import com.vaiashmanager.db.entity.UserEntity;
+import com.vaiashmanager.db.repository.UserRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import java.util.List;
+import java.util.Set;
+
+@SpringBootApplication
+public class DbApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(DbApplication.class, args);
+	}
+
+
+}
