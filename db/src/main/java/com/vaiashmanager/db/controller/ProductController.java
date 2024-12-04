@@ -1,6 +1,8 @@
 package com.vaiashmanager.db.controller;
 
 import com.vaiashmanager.db.dto.request.ProductFiltersRq;
+import com.vaiashmanager.db.dto.request.ProductRqDTO;
+import com.vaiashmanager.db.dto.response.ProductRsDTO;
 import com.vaiashmanager.db.entity.Product;
 import com.vaiashmanager.db.exception.CustomExceptionHandler;
 import com.vaiashmanager.db.service.ProductService;
@@ -29,8 +31,8 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createProduct(@RequestBody final Product product) {
-        Product response = this.productService.createProduct(product);
+    public ResponseEntity<?> createProduct(@RequestBody final ProductRqDTO product) {
+        ProductRsDTO response = this.productService.createProduct(product);
         return ResponseEntity.ok(response);
     }
 

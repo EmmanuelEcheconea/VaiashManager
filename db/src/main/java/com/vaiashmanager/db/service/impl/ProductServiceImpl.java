@@ -1,9 +1,12 @@
 package com.vaiashmanager.db.service.impl;
 
 import com.vaiashmanager.db.dto.request.ProductFiltersRq;
+import com.vaiashmanager.db.dto.request.ProductRqDTO;
+import com.vaiashmanager.db.dto.response.ProductRsDTO;
 import com.vaiashmanager.db.entity.Product;
 import com.vaiashmanager.db.enums.ProductError;
 import com.vaiashmanager.db.exception.CustomExceptionHandler;
+import com.vaiashmanager.db.mapper.ProductMapper;
 import com.vaiashmanager.db.repository.ProductRepository;
 import com.vaiashmanager.db.repository.ProductRepositoryPageable;
 import com.vaiashmanager.db.service.ProductService;
@@ -29,12 +32,14 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     private ProductRepositoryPageable productRepositoryPageable;
     private EntityManager entityManager;
+    private ProductMapper productMapper;
     @Autowired
     public ProductServiceImpl(final ProductRepository productRepository, ProductRepositoryPageable productRepositoryPageable,
-                              EntityManager entityManager) {
+                              EntityManager entityManager,ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.productRepositoryPageable = productRepositoryPageable;
         this.entityManager = entityManager;
+        this.productMapper = productMapper;
     }
 
     @Override
@@ -48,9 +53,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product createProduct(Product product) {
-        if(product != null) {
-            return this.productRepository.save(product);
+    public ProductRsDTO createProduct(ProductRqDTO productRq) {
+        if(productRq != null) {
+            System.out.println(productRq.getNombre());
+            Product response = this.productRepository.save(this.productMapper.productRqDTOToProduct(productRq));
+            return this.productMapper.productToProductRsDTO(response);
         }
         throw new CustomExceptionHandler(ProductError.PRODUCT_EMPTY.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
     }
