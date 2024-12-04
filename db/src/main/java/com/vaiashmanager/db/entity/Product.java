@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "productos")
+@Table(name = "producto")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +23,7 @@ public class Product {
     private double precio;
     @Column(name = "cantidad_stock")
     private int cantidadStock;
-    private String categoria;
+    @ManyToOne
+    @JoinColumn(name = "categoria")
+    private Category category;
 }

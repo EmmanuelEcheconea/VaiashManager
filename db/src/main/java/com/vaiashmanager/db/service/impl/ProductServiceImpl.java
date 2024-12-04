@@ -1,7 +1,9 @@
 package com.vaiashmanager.db.service.impl;
 
-import com.vaiashmanager.db.dto.ProductFiltersRq;
+import com.vaiashmanager.db.dto.request.ProductFiltersRq;
 import com.vaiashmanager.db.entity.Product;
+import com.vaiashmanager.db.enums.ProductError;
+import com.vaiashmanager.db.exception.CustomExceptionHandler;
 import com.vaiashmanager.db.repository.ProductRepository;
 import com.vaiashmanager.db.repository.ProductRepositoryPageable;
 import com.vaiashmanager.db.service.ProductService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -37,42 +40,52 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> retrieveAllProduct() {
         Iterable<Product> productosIterable = this.productRepository.findAll();
-        List<Product> products = StreamSupport.stream(productosIterable.spliterator(), false)
+        if(!productosIterable.iterator().hasNext()) {
+            return new ArrayList<>();
+        }
+        return  StreamSupport.stream(productosIterable.spliterator(), false)
                 .collect(Collectors.toList());
-        return products;
     }
 
     @Override
     public Product createProduct(Product product) {
-        return this.productRepository.save(product);
+        if(product != null) {
+            return this.productRepository.save(product);
+        }
+        throw new CustomExceptionHandler(ProductError.PRODUCT_EMPTY.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
     }
 
     @Override
     public Product updateProduct(Long idProduct, Product product) {
-        final Product retrieveProduct = this.productRepository.findById(idProduct).get();
-        if(product.getCantidadStock() > 0) {
-            retrieveProduct.setCantidadStock(product.getCantidadStock());
+        final Optional<Product> retrieveProduct = this.productRepository.findById(idProduct);
+        if(retrieveProduct.isEmpty()) {
+            throw new CustomExceptionHandler(ProductError.NOT_FOUND.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
         }
-        if(product.getCategoria() != null) {
-            retrieveProduct.setCategoria(product.getCategoria());
+        if(product.getCantidadStock() > 0) {
+            retrieveProduct.get().setCantidadStock(product.getCantidadStock());
+        }
+        if(product.getCategory() != null) {
+            retrieveProduct.get().setCategory(product.getCategory());
         }
         if(product.getPrecio() > 0) {
-            retrieveProduct.setPrecio(product.getPrecio());
+            retrieveProduct.get().setPrecio(product.getPrecio());
         }
         if(product.getNombre() != null) {
-            retrieveProduct.setNombre(product.getNombre());
+            retrieveProduct.get().setNombre(product.getNombre());
         }
         if(product.getDescripcion() != null) {
-            retrieveProduct.setDescripcion(product.getDescripcion());
+            retrieveProduct.get().setDescripcion(product.getDescripcion());
         }
-        final Product response = this.productRepository.save(retrieveProduct);
-        return response;
+        return this.productRepository.save(retrieveProduct.get());
     }
 
     @Override
     public void deleteProduct(Long idProduct) {
-        final Product retrieveProduct = this.productRepository.findById(idProduct).get();
-        this.productRepository.delete(retrieveProduct);
+        final Optional<Product> retrieveProduct = this.productRepository.findById(idProduct);
+        if(retrieveProduct.isEmpty()) {
+            throw new CustomExceptionHandler(ProductError.NOT_FOUND.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
+        }
+        this.productRepository.delete(retrieveProduct.get());
     }
 
     public Page<Product> getProducts(Pageable pageable) {
@@ -107,9 +120,8 @@ public class ProductServiceImpl implements ProductService {
             if (!predicates.isEmpty()) {
                 cq.where(cb.and(predicates.toArray(new Predicate[0])));
             }
-            return entityManager.createQuery(cq).getResultList();
         }
-        return new ArrayList<>();
+        return entityManager.createQuery(cq).getResultList();
     }
 
 }

@@ -1,7 +1,13 @@
 package com.vaiashmanager.db.service.impl;
 
-import com.vaiashmanager.db.dto.ClientFiltersRq;
+import com.vaiashmanager.db.dto.request.ClientFiltersRq;
+import com.vaiashmanager.db.entity.Cart;
 import com.vaiashmanager.db.entity.Client;
+import com.vaiashmanager.db.enums.CartState;
+import com.vaiashmanager.db.enums.ClientError;
+import com.vaiashmanager.db.enums.ProductError;
+import com.vaiashmanager.db.exception.CustomExceptionHandler;
+import com.vaiashmanager.db.repository.CartRepository;
 import com.vaiashmanager.db.repository.ClientRepository;
 import com.vaiashmanager.db.repository.ClientRepositoryPageable;
 import com.vaiashmanager.db.service.ClientService;
@@ -16,51 +22,73 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class ClientServiceImpl implements ClientService {
     private ClientRepository clientRepository;
+    private CartRepository cartRepository;
     private EntityManager entityManager;
     private ClientRepositoryPageable clientRepositoryPageable;
     @Autowired
     public ClientServiceImpl(final ClientRepository clientRepository,
                              ClientRepositoryPageable clientRepositoryPageable,
-                             EntityManager entityManager) {
+                             EntityManager entityManager,
+                             CartRepository cartRepository) {
         this.clientRepository = clientRepository;
         this.clientRepositoryPageable = clientRepositoryPageable;
         this.entityManager = entityManager;
+        this.cartRepository = cartRepository;
     }
 
     @Override
     public List<Client> retrieveAllClient() {
         Iterable<Client> clientIterable = this.clientRepository.findAll();
-        List<Client> client = StreamSupport.stream(clientIterable.spliterator(), false)
+        if(!clientIterable.iterator().hasNext()) {
+            return new ArrayList<>();
+        }
+        return  StreamSupport.stream(clientIterable.spliterator(), false)
                 .collect(Collectors.toList());
-        return client;
     }
 
     @Override
     public Client createClient(Client client) {
-        return this.clientRepository.save(client);
+        if(client!= null) {
+            Client response = this.clientRepository.save(client);
+            Cart cartSave = Cart.builder().client(Client.builder().id(response.getId()).nombre(response.getNombre()).build()).
+                    fechaCreacion(new Date())
+                    .state(CartState.ACTIVO).build();
+            this.cartRepository.save(cartSave);
+            return response;
+        }
+        throw new CustomExceptionHandler(ClientError.PRODUCT_EMPTY.getMessage(), ClientError.PRODUCT_EMPTY.getStatus());
     }
 
     @Override
     public Client updateClient(Long idClient, Client client) {
-        final Client retrieveClient = this.clientRepository.findById(idClient).get();
-        if(client.getNombre() != null) {
-            retrieveClient.setNombre(client.getNombre());
+        final Optional<Client> retrieveClient = this.clientRepository.findById(idClient);
+        if(retrieveClient.isEmpty()) {
+            throw new CustomExceptionHandler(ProductError.NOT_FOUND.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
         }
-        final Client response = this.clientRepository.save(retrieveClient);
-        return response;
+        if(client.getNombre() != null) {
+            retrieveClient.get().setNombre(client.getNombre());
+        }
+        return this.clientRepository.save(retrieveClient.get());
     }
 
     @Override
     public void deleteClient(Long idClient) {
-        final Client retrieveClient = this.clientRepository.findById(idClient).get();
-        this.clientRepository.delete(retrieveClient);
+        final Optional<Client> retrieveClient = this.clientRepository.findById(idClient);
+        if(retrieveClient.isEmpty()) {
+            throw new CustomExceptionHandler(ProductError.NOT_FOUND.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
+        }
+        this.clientRepository.delete(retrieveClient.get());
+        Cart cart = this.cartRepository.findByClient_Id(retrieveClient.get());
+        this.cartRepository.delete(cart);
     }
 
     @Override

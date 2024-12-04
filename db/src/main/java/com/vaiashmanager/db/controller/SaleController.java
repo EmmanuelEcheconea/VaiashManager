@@ -1,12 +1,13 @@
 package com.vaiashmanager.db.controller;
 
-import com.vaiashmanager.db.dto.SaleFiltersRq;
+import com.vaiashmanager.db.dto.request.SaleFiltersRq;
 import com.vaiashmanager.db.entity.Sale;
 import com.vaiashmanager.db.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,24 +18,26 @@ public class SaleController {
 
     private SaleService saleService;
     @Autowired
-    public SaleController(final SaleService SaleService) {
+    public SaleController(final SaleService saleService) {
         this.saleService = saleService;
     }
     @GetMapping("")
-    public List<Sale> retrieveAllSale() {
+    public ResponseEntity<?> retrieveAllSale() {
         List<Sale> response = this.saleService.retrieveAllSales();
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
-    public Sale createSale(@RequestBody final Sale sale) {
-        return this.saleService.createSale(sale);
+    public ResponseEntity<?> createSale(@RequestBody final Sale sale) {
+        Sale response = this.saleService.createSale(sale);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{idSale}")
-    public Sale updateVenta(@PathVariable("idSale") final Long idSale,
+    public ResponseEntity<?> updateVenta(@PathVariable("idSale") final Long idSale,
                             @RequestBody final Sale sale) {
-        return this.saleService.updateSale(idSale, sale);
+        Sale response = this.saleService.updateSale(idSale, sale);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{idSale}")
@@ -44,15 +47,17 @@ public class SaleController {
 
 
     @GetMapping("/sales")
-    public Page<Sale> listDetalleSale(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<?> listDetalleSale(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return saleService.getVentas(pageable);
+        Page<Sale> response = saleService.getVentas(pageable);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/filters")
-    public List<Sale> filterSale(@RequestBody SaleFiltersRq saleFiltersRq) {
-        return this.saleService.filters(saleFiltersRq);
+    public ResponseEntity<?> filterSale(@RequestBody SaleFiltersRq saleFiltersRq) {
+        List<Sale> response = this.saleService.filters(saleFiltersRq);
+        return ResponseEntity.ok(response);
     }
 
 }

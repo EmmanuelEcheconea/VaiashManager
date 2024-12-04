@@ -39,14 +39,21 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
                     // Configurar los endpoints publicos
-                    http.requestMatchers(HttpMethod.POST, "/client").permitAll();
-                    http.requestMatchers(HttpMethod.GET, "/product", "/category", "/cart", "/sale", "/saleDetail").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/client/**","/product/**", "/category/**", "/cart/**",
+                            "/sale/**", "/saleDetail/**").permitAll();
+                    http.requestMatchers(HttpMethod.GET, "/client/**","/product/**", "/category/**", "/cart/**",
+                            "/sale/**", "/saleDetail/**").permitAll();
+                    http.requestMatchers(HttpMethod.PUT, "/client/**","/product/**", "/category/**", "/cart/**",
+                            "/sale/**", "/saleDetail/**").permitAll();
+                    http.requestMatchers(HttpMethod.DELETE, "/client/**","/product/**", "/category/**", "/cart/**",
+                            "/sale/**", "/saleDetail/**").permitAll();
 
-                    http.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").hasAnyRole("ADMIN");
+                    http.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/product/**")
+                            .hasAnyRole("ADMIN");
 
                     // Cofnigurar los endpoints privados
-                    http.requestMatchers(HttpMethod.POST, "/auth/post").hasAnyRole("ADMIN", "DEVELOPER");
-                    http.requestMatchers(HttpMethod.PATCH, "/auth/patch").hasAnyAuthority("REFACTOR");
+                    //http.requestMatchers(HttpMethod.POST, "/auth/post").hasAnyRole("ADMIN", "DEVELOPER");
+                    //http.requestMatchers(HttpMethod.PATCH, "/auth/patch").hasAnyAuthority("REFACTOR");
 
                     // Configurar el resto de endpoint - NO ESPECIFICADOS
                     http.anyRequest().denyAll();

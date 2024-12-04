@@ -1,6 +1,6 @@
 package com.vaiashmanager.db.service;
 
-import com.vaiashmanager.db.dto.SaleFiltersRq;
+import com.vaiashmanager.db.dto.request.SaleFiltersRq;
 import com.vaiashmanager.db.entity.Sale;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,5 +1,4 @@
-package com.vaiashmanager.db.dto;
-
+package com.vaiashmanager.db.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ClientFiltersRq {
+public class CategoryFiltersRq {
     private Long id;
-    private String nombre;
+    private String nombreCategoria;
 }

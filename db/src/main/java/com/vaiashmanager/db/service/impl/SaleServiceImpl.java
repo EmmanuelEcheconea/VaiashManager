@@ -1,7 +1,9 @@
 package com.vaiashmanager.db.service.impl;
 
-import com.vaiashmanager.db.dto.SaleFiltersRq;
+import com.vaiashmanager.db.dto.request.SaleFiltersRq;
 import com.vaiashmanager.db.entity.Sale;
+import com.vaiashmanager.db.enums.SaleError;
+import com.vaiashmanager.db.exception.CustomExceptionHandler;
 import com.vaiashmanager.db.repository.SaleRepository;
 import com.vaiashmanager.db.repository.SaleRepositoryPageable;
 import com.vaiashmanager.db.service.SaleService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -37,34 +40,44 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public List<Sale> retrieveAllSales() {
-        Iterable<Sale> productosIterable = this.saleRepository.findAll();
-        List<Sale> productos = StreamSupport.stream(productosIterable.spliterator(), false)
+        Iterable<Sale> SaleIterable = this.saleRepository.findAll();
+        if(!SaleIterable.iterator().hasNext()) {
+            return new ArrayList<>();
+        }
+        return StreamSupport.stream(SaleIterable.spliterator(), false)
                 .collect(Collectors.toList());
-        return productos;
     }
 
     @Override
     public Sale createSale(Sale sale) {
-        return this.saleRepository.save(sale);
+        if(sale != null) {
+            return this.saleRepository.save(sale);
+        }
+        throw new CustomExceptionHandler(SaleError.PRODUCT_EMPTY.getMessage(), SaleError.PRODUCT_EMPTY.getStatus());
     }
 
     @Override
     public Sale updateSale(Long idSale, Sale sale) {
-        final Sale retrieveProduct = this.saleRepository.findById(idSale).get();
+        final Optional<Sale> retrieveProduct = this.saleRepository.findById(idSale);
+        if(retrieveProduct.isEmpty()) {
+            throw new CustomExceptionHandler(SaleError.NOT_FOUND.getMessage(), SaleError.PRODUCT_EMPTY.getStatus());
+        }
         if(sale.getFechaVenta() != null) {
-            retrieveProduct.setFechaVenta(sale.getFechaVenta());
+            retrieveProduct.get().setFechaVenta(sale.getFechaVenta());
         }
         if(sale.getTotalVenta() != null) {
-            retrieveProduct.setTotalVenta(sale.getTotalVenta());
+            retrieveProduct.get().setTotalVenta(sale.getTotalVenta());
         }
-        final Sale response = this.saleRepository.save(retrieveProduct);
-        return response;
+        return this.saleRepository.save(retrieveProduct.get());
     }
 
     @Override
     public void deleteSale(Long idSale) {
-        final Sale retrieveProduct = this.saleRepository.findById(idSale).get();
-        this.saleRepository.delete(retrieveProduct);
+        final Optional<Sale> retrieveProduct = this.saleRepository.findById(idSale);
+        if (retrieveProduct.isEmpty()) {
+            throw new CustomExceptionHandler(SaleError.NOT_FOUND.getMessage(), SaleError.PRODUCT_EMPTY.getStatus());
+        }
+        this.saleRepository.delete(retrieveProduct.get());
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.vaiashmanager.db.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,15 +21,15 @@ public class Sale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "id_carro")
-    @NotBlank(message = "El id del carro no puede estar vacio")
-    private Long idCarro;
+    @OneToOne
+    @JoinColumn(name = "id_carro",referencedColumnName = "id")
+    private Cart cart;
     @Column(name = "fecha_venta")
-    @NotBlank(message = "La fecha de venta no puede estar vacio")
+
+    @NotNull(message = "La fecha de venta no puede estar vacio")
     private Date fechaVenta;
     @Column(name = "total_venta")
-    @NotBlank(message = "El total no puede estar vacio")
+    @Min(0)
     private Double totalVenta;
-    @NotBlank(message = "El estado no puede estar vacio")
     private boolean estado;
 }

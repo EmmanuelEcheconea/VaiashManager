@@ -1,15 +1,15 @@
-package com.vaiashmanager.db.dto;
+package com.vaiashmanager.db.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
-public class CategoryFiltersRq {
-    private Long id;
-    private String nombreCategoria;
+public class CustomException {
+    private String message;
+    private String status;
 }
