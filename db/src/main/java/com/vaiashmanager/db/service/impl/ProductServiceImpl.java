@@ -17,6 +17,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -43,19 +44,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> retrieveAllProduct() {
+    public List<ProductRsDTO> retrieveAllProduct() {
         Iterable<Product> productosIterable = this.productRepository.findAll();
         if(!productosIterable.iterator().hasNext()) {
             return new ArrayList<>();
         }
-        return  StreamSupport.stream(productosIterable.spliterator(), false)
+        return StreamSupport.stream(productosIterable.spliterator(), false)
+                .map(this.productMapper::productToProductRsDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProductRsDTO createProduct(ProductRqDTO productRq) {
         if(productRq != null) {
-            System.out.println(productRq.getNombre());
             Product response = this.productRepository.save(this.productMapper.productRqDTOToProduct(productRq));
             return this.productMapper.productToProductRsDTO(response);
         }
@@ -63,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(Long idProduct, Product product) {
+    public ProductRsDTO updateProduct(Long idProduct, ProductRqDTO product) {
         final Optional<Product> retrieveProduct = this.productRepository.findById(idProduct);
         if(retrieveProduct.isEmpty()) {
             throw new CustomExceptionHandler(ProductError.NOT_FOUND.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
@@ -71,8 +72,8 @@ public class ProductServiceImpl implements ProductService {
         if(product.getCantidadStock() > 0) {
             retrieveProduct.get().setCantidadStock(product.getCantidadStock());
         }
-        if(product.getCategory() != null) {
-            retrieveProduct.get().setCategory(product.getCategory());
+        if(product.getCategoria() != null) {
+            retrieveProduct.get().setCategory(product.getCategoria());
         }
         if(product.getPrecio() > 0) {
             retrieveProduct.get().setPrecio(product.getPrecio());
@@ -80,10 +81,10 @@ public class ProductServiceImpl implements ProductService {
         if(product.getNombre() != null) {
             retrieveProduct.get().setNombre(product.getNombre());
         }
-        if(product.getDescripcion() != null) {
-            retrieveProduct.get().setDescripcion(product.getDescripcion());
+        if(product.getDescription() != null) {
+            retrieveProduct.get().setDescripcion(product.getDescription());
         }
-        return this.productRepository.save(retrieveProduct.get());
+        return this.productMapper.productToProductRsDTO(this.productRepository.save(retrieveProduct.get()));
     }
 
     @Override
@@ -95,11 +96,15 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository.delete(retrieveProduct.get());
     }
 
-    public Page<Product> getProducts(Pageable pageable) {
-        return productRepositoryPageable.findAll(pageable);
+    public Page<ProductRsDTO> getProducts(Pageable pageable) {
+        Page<Product> productsPage = productRepositoryPageable.findAll(pageable);
+        List<ProductRsDTO> productRsDTOs = productsPage.getContent().stream()
+                .map(this.productMapper::productToProductRsDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(productRsDTOs, pageable, productsPage.getTotalElements());
     }
 
-    public List<Product> filters(ProductFiltersRq productFiltersRq) {
+    public List<ProductRsDTO> filters(ProductFiltersRq productFiltersRq) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Product> cq = cb.createQuery(Product.class);
         Root<Product> root = cq.from(Product.class);
@@ -128,7 +133,8 @@ public class ProductServiceImpl implements ProductService {
                 cq.where(cb.and(predicates.toArray(new Predicate[0])));
             }
         }
-        return entityManager.createQuery(cq).getResultList();
+        List<Product> response = entityManager.createQuery(cq).getResultList();
+        return  response.stream().map(this.productMapper::productToProductRsDTO).collect(Collectors.toList());
     }
 
 }

@@ -26,7 +26,7 @@ public class ProductController {
     }
     @GetMapping("")
     public ResponseEntity<?> retrieveAllProduct() throws CustomExceptionHandler {
-        List<Product> response = this.productService.retrieveAllProduct();
+        List<ProductRsDTO> response = this.productService.retrieveAllProduct();
         return ResponseEntity.ok(response);
     }
 
@@ -37,8 +37,8 @@ public class ProductController {
     }
 
     @PutMapping("{idProduct}")
-    public ResponseEntity<?> updateProduct(@PathVariable("idProduct") final Long idProduct, @RequestBody final Product product) {
-        Product response =  this.productService.updateProduct(idProduct, product);
+    public ResponseEntity<?> updateProduct(@PathVariable("idProduct") final Long idProduct, @RequestBody final ProductRqDTO product) {
+        ProductRsDTO response =  this.productService.updateProduct(idProduct, product);
         return ResponseEntity.ok(response);
     }
 
@@ -51,13 +51,13 @@ public class ProductController {
     public ResponseEntity<?> listProducts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Product> response = productService.getProducts(pageable);
+        Page<ProductRsDTO> response = productService.getProducts(pageable);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/filters")
     public ResponseEntity<?> filterProduct(@RequestBody ProductFiltersRq productFiltersRq) {
-        List<Product> response = this.productService.filters(productFiltersRq);
+        List<ProductRsDTO> response = this.productService.filters(productFiltersRq);
         return ResponseEntity.ok(response);
     }
 

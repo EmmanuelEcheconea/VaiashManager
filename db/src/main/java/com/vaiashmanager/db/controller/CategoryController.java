@@ -1,5 +1,7 @@
 package com.vaiashmanager.db.controller;
 
+import com.vaiashmanager.db.dto.request.CategoryRqDTO;
+import com.vaiashmanager.db.dto.response.CategoryRsDTO;
 import com.vaiashmanager.db.entity.Category;
 import com.vaiashmanager.db.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +31,9 @@ public class CategoryController {
     }
 
     @PutMapping("{idCategory}")
-    public ResponseEntity<?> updateCategory(@PathVariable("idCategory") final Long idCategory, @RequestBody final Category category) {
-        Category response = this.categoryService.updateCategoria(idCategory, category);
+    public ResponseEntity<?> updateCategory(@PathVariable("idCategory") final Long idCategory,
+                                            @RequestBody final CategoryRqDTO category) {
+        CategoryRsDTO response = this.categoryService.updateCategoria(idCategory, category);
         return ResponseEntity.ok(response);
     }
 

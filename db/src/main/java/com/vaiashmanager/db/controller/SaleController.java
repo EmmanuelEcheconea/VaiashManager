@@ -1,6 +1,8 @@
 package com.vaiashmanager.db.controller;
 
 import com.vaiashmanager.db.dto.request.SaleFiltersRq;
+import com.vaiashmanager.db.dto.request.SaleRqDTO;
+import com.vaiashmanager.db.dto.response.SaleRsDTO;
 import com.vaiashmanager.db.entity.Sale;
 import com.vaiashmanager.db.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +25,13 @@ public class SaleController {
     }
     @GetMapping("")
     public ResponseEntity<?> retrieveAllSale() {
-        List<Sale> response = this.saleService.retrieveAllSales();
+        List<SaleRsDTO> response = this.saleService.retrieveAllSales();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createSale(@RequestBody final Sale sale) {
-        Sale response = this.saleService.createSale(sale);
-        return ResponseEntity.ok(response);
-    }
-
-    @PutMapping("{idSale}")
-    public ResponseEntity<?> updateVenta(@PathVariable("idSale") final Long idSale,
-                            @RequestBody final Sale sale) {
-        Sale response = this.saleService.updateSale(idSale, sale);
+    public ResponseEntity<?> createSale(@RequestBody final SaleRqDTO sale) {
+        SaleRsDTO response = this.saleService.createSale(sale);
         return ResponseEntity.ok(response);
     }
 
@@ -50,13 +45,13 @@ public class SaleController {
     public ResponseEntity<?> listDetalleSale(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Sale> response = saleService.getVentas(pageable);
+        Page<SaleRsDTO> response = saleService.getVentas(pageable);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/filters")
     public ResponseEntity<?> filterSale(@RequestBody SaleFiltersRq saleFiltersRq) {
-        List<Sale> response = this.saleService.filters(saleFiltersRq);
+        List<SaleRsDTO> response = this.saleService.filters(saleFiltersRq);
         return ResponseEntity.ok(response);
     }
 

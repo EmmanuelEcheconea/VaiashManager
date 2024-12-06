@@ -1,6 +1,8 @@
 package com.vaiashmanager.db.controller;
 
 import com.vaiashmanager.db.dto.request.ClientFiltersRq;
+import com.vaiashmanager.db.dto.request.ClientRqDTO;
+import com.vaiashmanager.db.dto.response.ClientRsDTO;
 import com.vaiashmanager.db.entity.Client;
 import com.vaiashmanager.db.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +25,19 @@ public class ClientController {
     }
     @GetMapping("")
     public ResponseEntity<?> retrieveAllClient() {
-        List<Client> response = this.clientService.retrieveAllClient();
+        List<ClientRsDTO> response = this.clientService.retrieveAllClient();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createClient(@RequestBody final Client client) {
-        Client reponse = this.clientService.createClient(client);
+    public ResponseEntity<?> createClient(@RequestBody final ClientRqDTO client) {
+        ClientRsDTO reponse = this.clientService.createClient(client);
         return ResponseEntity.ok(reponse);
     }
 
     @PutMapping("{idClient}")
-    public ResponseEntity<?> updateClient(@PathVariable("idClient") final Long idClient, @RequestBody final Client client) {
-        Client response = this.clientService.updateClient(idClient, client);
+    public ResponseEntity<?> updateClient(@PathVariable("idClient") final Long idClient, @RequestBody final ClientRqDTO client) {
+        ClientRsDTO response = this.clientService.updateClient(idClient, client);
         return ResponseEntity.ok(response);
     }
 
@@ -48,13 +50,13 @@ public class ClientController {
     public ResponseEntity<?> listClients(@RequestParam(defaultValue = "0") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Client> response = clientService.getClients(pageable);
+        Page<ClientRsDTO> response = clientService.getClients(pageable);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/filters")
     public ResponseEntity<?> filterClients(@RequestBody ClientFiltersRq clientFiltersRq) {
-        List<Client> response = this.clientService.filters(clientFiltersRq);
+        List<ClientRsDTO> response = this.clientService.filters(clientFiltersRq);
         return ResponseEntity.ok(response);
     }
 

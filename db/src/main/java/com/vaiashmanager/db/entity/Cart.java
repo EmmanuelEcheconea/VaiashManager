@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -23,6 +24,6 @@ public class Cart {
     @JoinColumn(name = "id_cliente",referencedColumnName = "id")
     private Client client;
     @Column(name = "fecha_creacion")
-    private Date fechaCreacion;
-    private CartState state;
+    private Timestamp fechaCreacion;
+    private String state;
 }

@@ -1,5 +1,7 @@
 package com.vaiashmanager.db.controller;
 
+import com.vaiashmanager.db.dto.request.CartRqDTO;
+import com.vaiashmanager.db.dto.response.CartRsDTO;
 import com.vaiashmanager.db.entity.Cart;
 import com.vaiashmanager.db.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,8 @@ public class CartController {
     }
 
     @PutMapping("{idCart}")
-    public ResponseEntity<?> updateCart(@PathVariable("idCart") final Long idCart, @RequestBody final Cart cart) {
-        Cart response = this.cartService.updateCart(idCart, cart);
+    public ResponseEntity<?> updateCart(@PathVariable("idCart") final Long idCart, @RequestBody final CartRqDTO cart) {
+        CartRsDTO response = this.cartService.updateCart(idCart, cart);
         return ResponseEntity.ok(response);
     }
 }

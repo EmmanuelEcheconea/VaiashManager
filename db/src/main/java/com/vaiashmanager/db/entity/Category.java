@@ -2,16 +2,14 @@ package com.vaiashmanager.db.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name = "categoria")
 public class Category {
     @Id

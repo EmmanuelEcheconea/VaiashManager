@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProductRqDTO {
-    private Long id;
     private String nombre;
     private String description;
     private double precio;

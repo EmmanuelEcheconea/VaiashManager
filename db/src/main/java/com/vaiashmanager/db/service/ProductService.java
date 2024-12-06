@@ -12,12 +12,12 @@ import java.util.List;
 
 @Component
 public interface ProductService {
-    public List<Product> retrieveAllProduct();
+    public List<ProductRsDTO> retrieveAllProduct();
     public ProductRsDTO createProduct(final ProductRqDTO product);
-    public Product updateProduct(final Long idProduct, final Product product);
+    public ProductRsDTO updateProduct(final Long idProduct, final ProductRqDTO product);
     public void deleteProduct(final Long idProduct);
-    public Page<Product> getProducts(Pageable pageable);
+    public Page<ProductRsDTO> getProducts(Pageable pageable);
 
-    public List<Product> filters(ProductFiltersRq productFiltersRq);
+    public List<ProductRsDTO> filters(ProductFiltersRq productFiltersRq);
 
 }

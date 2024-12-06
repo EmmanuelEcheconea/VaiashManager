@@ -24,5 +24,6 @@ public class RoleEntity {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    @Builder.Default
     private Set<PermissionEntity> permissionList = new HashSet<>();
 }

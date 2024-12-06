@@ -1,13 +1,11 @@
 package com.vaiashmanager.db.entity;
 
+import com.vaiashmanager.db.enums.SaleState;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -17,6 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "venta")
+@Builder
 public class Sale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +30,17 @@ public class Sale {
     @Column(name = "total_venta")
     @Min(0)
     private Double totalVenta;
-    private boolean estado;
+    private String estado;
+
+    @Override
+    public String toString() {
+        return "Sale{" +
+                "id=" + id +
+                ", cart=" + cart +
+                ", cart id=" + cart.getId() +
+                ", fechaVenta=" + fechaVenta +
+                ", totalVenta=" + totalVenta +
+                ", estado=" + estado +
+                '}';
+    }
 }

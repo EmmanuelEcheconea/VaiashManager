@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
     public Cart findByClient_Id(Client client);
+    public Optional<Cart> findByClient_IdAndState(Client client, String state);
 
 }
