@@ -81,9 +81,11 @@ public class SaleServiceImpl implements SaleService {
             }
             List<CartProduct> cartProductList = this.cartProductRepository.
                         findByIdCartAndState(cartEntity.get(), CartProductState.PENDIENTE.name());
-            if(cartProductList == null) {
+            if(cartProductList.isEmpty()) {
+                //aca hay que ver el tema de  carproduct q si esta vacio, el mensaje sea, q  no tien compras para  ahcer
                 throw  new CustomExceptionHandler(CartProductError.NOT_FOUND.getMessage(), CartProductError.NOT_FOUND.getStatus());
             }
+
             double totalSum = cartProductList.stream()
                     .mapToDouble(cp -> cp.getIdProduct().getPrecio())
                     .sum();
@@ -91,12 +93,14 @@ public class SaleServiceImpl implements SaleService {
                     fechaVenta(new Date()).totalVenta(totalSum).build();
 
             SaleRsDTO response = this.saleMapper.saleToSaleRsDTO(this.saleRepository.save(entitySale));
-            cartEntity.get().setState(CartState.INACTIVO.name());
-            this.cartRepository.save(cartEntity.get());
+            cartProductList.forEach(cartProduct -> cartProduct.setState("PAGADO"));
+            this.cartProductRepository.saveAll(cartProductList);
+           // cartEntity.get().setState(CartState.INACTIVO.name());
+            //this.cartRepository.save(cartEntity.get());
             //crear nuevo carro
-            Cart newCart = Cart.builder().state(CartState.ACTIVO.name()).client(cartEntity.get()
-                    .getClient()).fechaCreacion(new Timestamp(System.currentTimeMillis())).build();
-            this.cartRepository.save(newCart);
+           // Cart newCart = Cart.builder().state(CartState.ACTIVO.name()).client(cartEntity.get()
+           //         .getClient()).fechaCreacion(new Timestamp(System.currentTimeMillis())).build();
+           // this.cartRepository.save(newCart);
             return response;
         }
         throw new CustomExceptionHandler(SaleError.PRODUCT_EMPTY.getMessage(), SaleError.PRODUCT_EMPTY.getStatus());

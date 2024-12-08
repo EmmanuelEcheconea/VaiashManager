@@ -2,7 +2,8 @@ package com.vaiashmanager.db.enums;
 
 public enum CategoryError {
     NOT_FOUND("Categoria no encontrada", 404),
-    PRODUCT_EMPTY("No enviaste ninguna categoria. no podemos crearlo.", 400);
+    CATEGORY_EMPTY("No enviaste ninguna categoria. no podemos crearlo.", 400),
+    CATEGORY_EXISTE("El nombre de la categoria ya existe.", 404);
     private final String message;
     private final int status;
 

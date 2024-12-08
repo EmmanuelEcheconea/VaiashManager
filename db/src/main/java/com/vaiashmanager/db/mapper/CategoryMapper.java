@@ -11,4 +11,8 @@ public class CategoryMapper {
         return CategoryRsDTO.builder().id(category.getId()).nombreCategoria(category.getNombreCategoria()).build();
     }
 
+    public Category categoryRqDTOToCategory(final CategoryRqDTO categoryRqDTO) {
+        return Category.builder().nombreCategoria(categoryRqDTO.getNombreCategoria()).build();
+    }
+
 }

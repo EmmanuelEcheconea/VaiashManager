@@ -2,7 +2,6 @@ package com.vaiashmanager.db.controller;
 
 import com.vaiashmanager.db.dto.request.CategoryRqDTO;
 import com.vaiashmanager.db.dto.response.CategoryRsDTO;
-import com.vaiashmanager.db.entity.Category;
 import com.vaiashmanager.db.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,25 +19,25 @@ public class CategoryController {
     }
     @GetMapping("")
     public ResponseEntity<?> retrieveAllCategory() {
-        List<Category> response = this.categoryService.retrieveAllCategoria();
+        List<CategoryRsDTO> response = this.categoryService.retrieveAllCategory();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createCategory(@RequestBody final Category category) {
-        Category response = this.categoryService.createCategoria(category);
+    public ResponseEntity<?> createCategory(@RequestBody final CategoryRqDTO category) {
+        CategoryRsDTO response = this.categoryService.createCategory(category);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("{idCategory}")
     public ResponseEntity<?> updateCategory(@PathVariable("idCategory") final Long idCategory,
                                             @RequestBody final CategoryRqDTO category) {
-        CategoryRsDTO response = this.categoryService.updateCategoria(idCategory, category);
+        CategoryRsDTO response = this.categoryService.updateCategory(idCategory, category);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{idCategory}")
     public void deleteCategory(@PathVariable("idCategory") final Long idCategory) {
-        this.categoryService.deleteCategoria(idCategory);
+        this.categoryService.deleteCategory(idCategory);
     }
 }

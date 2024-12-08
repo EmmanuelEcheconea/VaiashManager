@@ -21,7 +21,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "id_cliente",referencedColumnName = "id")
+    @JoinColumn(name = "id_client",referencedColumnName = "id")
     private Client client;
     @Column(name = "fecha_creacion")
     private Timestamp fechaCreacion;

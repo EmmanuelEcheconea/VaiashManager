@@ -2,6 +2,7 @@ package com.vaiashmanager.db.mapper;
 
 import com.vaiashmanager.db.dto.request.ProductRqDTO;
 import com.vaiashmanager.db.dto.response.ProductRsDTO;
+import com.vaiashmanager.db.entity.Category;
 import com.vaiashmanager.db.entity.Product;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,15 @@ public class ProductMapper {
         product.setDescripcion(dto.getDescription());
         product.setPrecio(dto.getPrecio());
         product.setNombre(dto.getNombre());
-        product.setCategory(dto.getCategoria());
+        product.setCantidadStock(dto.getCantidadStock());
+        return product;
+    }
+    public Product productRqDTOToProduct(ProductRqDTO dto, Category category) {
+        Product product = new Product();
+        product.setDescripcion(dto.getDescription());
+        product.setPrecio(dto.getPrecio());
+        product.setNombre(dto.getNombre());
+        product.setCategory(category);
         product.setCantidadStock(dto.getCantidadStock());
         return product;
     }

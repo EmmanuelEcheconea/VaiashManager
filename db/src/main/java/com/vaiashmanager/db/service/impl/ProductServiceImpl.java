@@ -3,10 +3,13 @@ package com.vaiashmanager.db.service.impl;
 import com.vaiashmanager.db.dto.request.ProductFiltersRq;
 import com.vaiashmanager.db.dto.request.ProductRqDTO;
 import com.vaiashmanager.db.dto.response.ProductRsDTO;
+import com.vaiashmanager.db.entity.Category;
 import com.vaiashmanager.db.entity.Product;
+import com.vaiashmanager.db.enums.CategoryError;
 import com.vaiashmanager.db.enums.ProductError;
 import com.vaiashmanager.db.exception.CustomExceptionHandler;
 import com.vaiashmanager.db.mapper.ProductMapper;
+import com.vaiashmanager.db.repository.CategoryRepository;
 import com.vaiashmanager.db.repository.ProductRepository;
 import com.vaiashmanager.db.repository.ProductRepositoryPageable;
 import com.vaiashmanager.db.service.ProductService;
@@ -34,13 +37,16 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepositoryPageable productRepositoryPageable;
     private EntityManager entityManager;
     private ProductMapper productMapper;
+    private CategoryRepository categoryRepository;
     @Autowired
     public ProductServiceImpl(final ProductRepository productRepository, ProductRepositoryPageable productRepositoryPageable,
-                              EntityManager entityManager,ProductMapper productMapper) {
+                              EntityManager entityManager,ProductMapper productMapper,
+                              CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.productRepositoryPageable = productRepositoryPageable;
         this.entityManager = entityManager;
         this.productMapper = productMapper;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -57,7 +63,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductRsDTO createProduct(ProductRqDTO productRq) {
         if(productRq != null) {
-            Product response = this.productRepository.save(this.productMapper.productRqDTOToProduct(productRq));
+            Optional<Product> productByName = this.productRepository.findByNombre(productRq.getNombre());
+            if(productByName.isPresent()) {
+                throw new CustomExceptionHandler(ProductError.PRODUCT_EXIST.getMessage(), ProductError.PRODUCT_EXIST.getStatus());
+            }
+            Optional<Category> categoryById = this.categoryRepository.findById(productRq.getIdCategoria());
+            if(categoryById.isEmpty()) {
+                throw new CustomExceptionHandler(CategoryError.NOT_FOUND.getMessage(), CategoryError.NOT_FOUND.getStatus());
+            }
+            Product response = this.productRepository.save(this.productMapper.productRqDTOToProduct(productRq, categoryById.get()));
             return this.productMapper.productToProductRsDTO(response);
         }
         throw new CustomExceptionHandler(ProductError.PRODUCT_EMPTY.getMessage(), ProductError.PRODUCT_EMPTY.getStatus());
@@ -72,9 +86,11 @@ public class ProductServiceImpl implements ProductService {
         if(product.getCantidadStock() > 0) {
             retrieveProduct.get().setCantidadStock(product.getCantidadStock());
         }
-        if(product.getCategoria() != null) {
-            retrieveProduct.get().setCategory(product.getCategoria());
+        Optional<Category> categoryById = this.categoryRepository.findById(retrieveProduct.get().getCategory().getId());
+        if(categoryById.isEmpty()) {
+            throw new CustomExceptionHandler(CategoryError.NOT_FOUND.getMessage(), CategoryError.NOT_FOUND.getStatus());
         }
+        retrieveProduct.get().setCategory(categoryById.get());
         if(product.getPrecio() > 0) {
             retrieveProduct.get().setPrecio(product.getPrecio());
         }
@@ -114,7 +130,7 @@ public class ProductServiceImpl implements ProductService {
             if (productFiltersRq.getDescription() != null) {
                 predicates.add(cb.equal(root.get("descripcion"), productFiltersRq.getDescription()));
             }
-            if (productFiltersRq.getPrecio() > -1) {
+            if (productFiltersRq.getPrecio() > 0.0) {
                 predicates.add(cb.equal(root.get("precio"), productFiltersRq.getPrecio()));
             }
             if (productFiltersRq.getNombre() != null) {

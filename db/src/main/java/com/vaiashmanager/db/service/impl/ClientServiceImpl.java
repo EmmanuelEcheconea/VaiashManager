@@ -70,7 +70,8 @@ public class ClientServiceImpl implements ClientService {
     public ClientRsDTO createClient(ClientRqDTO client) {
         if(client!= null) {
             Client response = this.clientRepository.save(this.clientMapper.clientRqDTOToClient(client));
-            Cart cartSave = Cart.builder().client(Client.builder().id(response.getId()).nombre(response.getNombre()).build()).
+            System.out.println(response.getId());
+            Cart cartSave = Cart.builder().client(response).
                     fechaCreacion(new Timestamp(System.currentTimeMillis()))
                     .state(CartState.ACTIVO.name()).build();
             this.cartRepository.save(cartSave);

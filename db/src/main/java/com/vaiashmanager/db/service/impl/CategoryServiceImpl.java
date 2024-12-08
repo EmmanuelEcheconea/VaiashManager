@@ -29,22 +29,31 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> retrieveAllCategoria() {
+    public List<CategoryRsDTO> retrieveAllCategory() {
         Iterable<Category> categoryIterable = this.categoryRepository.findAll();
         if(!categoryIterable.iterator().hasNext()) {
             return new ArrayList<>();
         }
-        return StreamSupport.stream(categoryIterable.spliterator(), false)
+        List<Category> response = StreamSupport.stream(categoryIterable.spliterator(), false)
                 .collect(Collectors.toList());
+        return response.stream().map(this.categoryMapper::categoryToCategoryRsDTO).collect(Collectors.toList());
     }
 
     @Override
-    public Category createCategoria(Category category) {
-        return this.categoryRepository.save(category);
+    public CategoryRsDTO createCategory(CategoryRqDTO category) {
+        if(category.getNombreCategoria().isEmpty() || category.getNombreCategoria().trim().equals("")) {
+            throw new CustomExceptionHandler(CategoryError.CATEGORY_EMPTY.getMessage(), CategoryError.CATEGORY_EMPTY.getStatus());
+        }
+        Optional<Category> categoryByName = this.categoryRepository.findByNombreCategoria(category.getNombreCategoria());
+        if(categoryByName.isPresent()) {
+            throw new CustomExceptionHandler(CategoryError.CATEGORY_EXISTE.getMessage(), CategoryError.CATEGORY_EXISTE.getStatus());
+        }
+        return this.categoryMapper.categoryToCategoryRsDTO(this.categoryRepository.save(Category.builder()
+                .nombreCategoria(category.getNombreCategoria()).build()));
     }
 
     @Override
-    public CategoryRsDTO updateCategoria(Long idCategoria, CategoryRqDTO category) {
+    public CategoryRsDTO updateCategory(Long idCategoria, CategoryRqDTO category) {
         final Optional<Category> retrieveProduct = this.categoryRepository.findById(idCategoria);
         if(retrieveProduct.isEmpty()) {
             throw new CustomExceptionHandler(CategoryError.NOT_FOUND.getMessage(), CategoryError.NOT_FOUND.getStatus());
@@ -56,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategoria(Long idCategoria) {
+    public void deleteCategory(Long idCategoria) {
         final Optional<Category> retrieveProduct = this.categoryRepository.findById(idCategoria);
         if(retrieveProduct.isEmpty()) {
             throw new CustomExceptionHandler(CategoryError.NOT_FOUND.getMessage(), CategoryError.NOT_FOUND.getStatus());

@@ -40,13 +40,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(http -> {
                     // Configurar los endpoints publicos
                     http.requestMatchers(HttpMethod.POST, "/client/**","/product/**", "/category/**", "/cart/**",
-                            "/sale/**", "/saleDetail/**").permitAll();
+                            "/sale/**", "/saleDetail/**", "/cartProduct/**").permitAll();
                     http.requestMatchers(HttpMethod.GET, "/client/**","/product/**", "/category/**", "/cart/**",
-                            "/sale/**", "/saleDetail/**").permitAll();
+                            "/sale/**", "/saleDetail/**", "/cartProduct/**").permitAll();
                     http.requestMatchers(HttpMethod.PUT, "/client/**","/product/**", "/category/**", "/cart/**",
-                            "/sale/**", "/saleDetail/**").permitAll();
+                            "/sale/**", "/saleDetail/**", "/cartProduct/**").permitAll();
                     http.requestMatchers(HttpMethod.DELETE, "/client/**","/product/**", "/category/**", "/cart/**",
-                            "/sale/**", "/saleDetail/**").permitAll();
+                            "/sale/**", "/saleDetail/**", "/cartProduct/**").permitAll();
 
                     http.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/product/**")
                             .hasAnyRole("ADMIN");
