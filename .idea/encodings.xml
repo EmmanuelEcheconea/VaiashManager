@@ -8,6 +8,8 @@
     <file url="file://$PROJECT_DIR$/microservice-eureka/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microservice-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microservice-student/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-sendermail/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-sendermail/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot-mail-sender/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot-mail-sender/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />

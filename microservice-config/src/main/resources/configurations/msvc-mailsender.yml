@@ -1,6 +1,4 @@
-email:
-  sender: tu email
-  password: tu contrasena
+
 spring:
   servlet:
     multipart:
@@ -8,7 +6,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   application:
-    name: SpringBootMailSender
+    name: ms-sendermail
 eureka:
   instance:
     hostname: localhost

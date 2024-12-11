@@ -14,8 +14,8 @@ spring:
           uri: 'lb://db'
           predicates:
             - Path=/product/**
-        - id: SpringBootMailSender
-          uri: 'lb://SpringBootMailSender'
+        - id: ms-sendermail
+          uri: 'lb://ms-sendermail'
           predicates:
             - Path=/v1/**
 eureka:

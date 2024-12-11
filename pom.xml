@@ -22,6 +22,7 @@
         <module>microservice-config</module>
         <module>db</module>
         <module>spring-boot-mail-sender</module>
+        <module>ms-sendermail</module>
     </modules>
 
     <properties>
