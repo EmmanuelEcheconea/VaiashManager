@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/VaiashManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/spring-boot-mail-sender" vcs="Git" />
   </component>
 </project>
